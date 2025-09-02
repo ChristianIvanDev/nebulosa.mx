@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings  # <-- Agrega esta línea
+import uuid
 
 class Boleto(models.Model):
     # Datos del comprador (guardados en el boleto)
