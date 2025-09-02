@@ -1,59 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
+{% load static %}
+<!doctype html>
+<html lang="es">
 <head>
-    <!-- Header -->
-    <meta charSet="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="My Express JS website">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <title>Iniciar sesión | Nebulosa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Tailwind (CDN para desarrollo) -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 h-screen flex items-center justify-center">
-    <!-- component -->
-    <div class="h-screen bg-gradient-to-br from-blue-600 to-cyan-300 flex justify-center items-center w-full">
-        
-        <form method='POST' action='#'>
-            <div class="bg-white px-10 py-8 rounded-xl w-screen shadow-xl max-w-sm">
-                <div class="space-y-4">
-                    <h1 class="text-center text-2xl font-semibold text-gray-600">Login</h1>
-                    <hr>
-                <div class="flex items-center border-2 py-2 px-3 rounded-md mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                    </svg>
-                    <input class="pl-2 outline-none border-none w-full" type="email" name="email" value="" placeholder="Email" required/>
+<body class="min-h-screen bg-gradient-to-br from-blue-600 to-cyan-300 flex items-center justify-center">
+  <main class="w-full max-w-md">
+    <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-8">
+      <a href="{% url 'home' %}" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5A1 1 0 018.707 4.293L5.414 7.586H18a1 1 0 110 2H5.414l3.293 3.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+        Volver al inicio
+      </a>
 
-                </div>
-                <div class="flex items-center border-2 py-2 px-3 rounded-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                    </svg>
-                    <input class="pl-2 outline-none border-none w-full" type="password" name="password" id="" placeholder="Password" required/>
-                    
-                </div>
-                </div>
-                <!-- Remember Me checkbox -->
-                <div class="flex justify-center items-center mt-4">
-                    <p class="inline-flex items-center text-gray-700 font-medium text-xs text-center">
-                        <input type="checkbox" id="rememberMeCheckbox" name="rememberMe" class="mr-2">
-                        <span class="text-xs font-semibold">Remember me?</span>
-                    </p>
-                </div>
+      <h1 class="text-2xl font-semibold text-gray-800 mb-2">Iniciar sesión</h1>
+      <p class="text-sm text-gray-500 mb-6">Accede con tu usuario y contraseña.</p>
 
-                <button type="submit" value="login" id="login" class="mt-6 w-full shadow-xl bg-gradient-to-tr from-blue-600 to-red-400 hover:to-red-700 text-indigo-100 py-2 rounded-md text-lg tracking-wide transition duration-1000">Login</button>
-                <hr>
-                <div class="flex justify-center items-center mt-4">
-                    <p class="inline-flex items-center text-gray-700 font-medium text-xs text-center">
-                        <span class="ml-2">You don't have an account?<a href="#" class="text-xs ml-2 text-blue-500 font-semibold">Register now &rarr;</a>
-                        </span>
-                    </p>
-                </div>
+      {% if form.non_field_errors %}
+        <div class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+          {% for err in form.non_field_errors %}<p>{{ err }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      {% if messages %}
+        <div class="mb-4 space-y-2">
+          {% for message in messages %}
+            <div class="rounded-md p-3 text-sm
+              {% if message.tags == 'error' %} bg-red-50 text-red-700
+              {% elif message.tags == 'success' %} bg-green-50 text-green-700
+              {% else %} bg-gray-50 text-gray-700 {% endif %}">
+              {{ message }}
             </div>
-            <div class="pt-6 text-base font-semibold leading-7">
-                <p class="font-sans text-red-500 text-md hover:text-red-800">
-                <a href="/" class="absolute">&larr; Home</a>
-                </p>
-            </div>
-        </form>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'login' %}" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- Usuario -->
+        <div>
+          <label for="id_username" class="block text-sm font-medium text-gray-700 mb-1">Usuario o email</label>
+          <div class="flex items-center border-2 border-gray-200 focus-within:border-blue-500 rounded-md px-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+            </svg>
+            <input
+              type="text" name="username" id="id_username" required
+              class="w-full pl-2 py-2 outline-none border-0 focus:ring-0"
+              placeholder="Usuario o email"
+              value="{{ form.username.value|default_if_none:'' }}"
+            />
+          </div>
+          {% if form.username.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Contraseña -->
+        <div>
+          <label for="id_password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+          <div class="flex items-center border-2 border-gray-200 focus-within:border-blue-500 rounded-md px-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+            </svg>
+            <input
+              type="password" name="password" id="id_password" required
+              class="w-full pl-2 py-2 outline-none border-0 focus:ring-0"
+              placeholder="••••••••"
+            />
+          </div>
+          {% if form.password.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ form.password.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Recordarme -->
+        <div class="flex items-center justify-between">
+          <label class="inline-flex items-center text-sm text-gray-700">
+            <input type="checkbox" name="remember" class="mr-2 rounded">
+            Recordarme
+          </label>
+          <a href="{% url 'password_reset' %}" class="text-sm text-blue-600 hover:text-blue-800">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <!-- Next (mantener destino) -->
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+        <button type="submit"
+          class="w-full mt-1 inline-flex justify-center rounded-md bg-blue-600 hover:bg-blue-700 px-4 py-2.5 text-white font-medium shadow-lg transition">
+          Entrar
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-gray-600">
+        ¿No tienes cuenta?
+        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Regístrate &rarr;</a>
+      </p>
     </div>
+
+    <p class="text-center text-white/90 mt-6 text-xs">© {{ now|date:"Y" }} Nebulosa</p>
+  </main>
 </body>
 </html>
